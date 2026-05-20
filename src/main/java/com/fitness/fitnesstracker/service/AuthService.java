@@ -9,6 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service responsible for user authentication logic.
+ * Handles user registration and login, including password hashing and JWT token generation.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -17,6 +21,15 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
+    /**
+     * Registers a new user in the system.
+     * Checks if the email is already in use, hashes the password,
+     * saves the user to the database and returns a JWT token.
+     *
+     * @param request contains email, password, first name and last name
+     * @return JWT token for the newly registered user
+     * @throws RuntimeException if a user with the given email already exists
+     */
     public String register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Korisnik s tim emailom već postoji!");
@@ -34,6 +47,14 @@ public class AuthService {
         return jwtService.generateToken(user.getEmail());
     }
 
+    /**
+     * Authenticates an existing user.
+     * Verifies the email and password, and returns a JWT token if credentials are valid.
+     *
+     * @param request contains email and password
+     * @return JWT token for the authenticated user
+     * @throws RuntimeException if the user is not found or the password is incorrect
+     */
     public String login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Korisnik nije pronađen!"));

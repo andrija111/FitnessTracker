@@ -9,6 +9,10 @@ import com.fitness.fitnesstracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service responsible for managing user fitness profiles.
+ * Handles creating, updating and retrieving user profile data.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserProfileService {
@@ -16,6 +20,16 @@ public class UserProfileService {
     private final UserProfileRepository userProfileRepository;
     private final UserRepository userRepository;
 
+    /**
+     * Creates or updates the fitness profile for the authenticated user.
+     * If a profile already exists for the user, it will be updated.
+     * If not, a new profile will be created.
+     *
+     * @param email   the email of the authenticated user
+     * @param request contains all fitness-related profile data
+     * @return the saved or updated user profile as a response DTO
+     * @throws RuntimeException if the user is not found
+     */
     public UserProfileResponse saveProfile(String email, UserProfileRequest request) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Korisnik nije pronađen!"));
@@ -37,6 +51,13 @@ public class UserProfileService {
         return mapToResponse(user, profile);
     }
 
+    /**
+     * Retrieves the fitness profile of the authenticated user.
+     *
+     * @param email the email of the authenticated user
+     * @return the user profile as a response DTO
+     * @throws RuntimeException if the user or profile is not found
+     */
     public UserProfileResponse getProfile(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Korisnik nije pronađen!"));
@@ -47,6 +68,13 @@ public class UserProfileService {
         return mapToResponse(user, profile);
     }
 
+    /**
+     * Maps User and UserProfile entities to a UserProfileResponse DTO.
+     *
+     * @param user    the User entity
+     * @param profile the UserProfile entity
+     * @return populated UserProfileResponse DTO
+     */
     private UserProfileResponse mapToResponse(User user, UserProfile profile) {
         UserProfileResponse response = new UserProfileResponse();
         response.setId(profile.getId());
