@@ -1,5 +1,6 @@
 package com.fitness.fitnesstracker.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -30,6 +31,7 @@ public class User {
      * The hashed password of the user.
      * Stored as a BCrypt hash, never as plain text.
      */
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
