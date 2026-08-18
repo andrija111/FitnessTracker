@@ -1,4 +1,5 @@
 services:
+  # MySQL baza podataka
   mysql:
     image: mysql:8.0
     container_name: fitnesstracker-db
@@ -11,6 +12,30 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    # Provjerava je li MySQL stvarno spreman za konekcije, ne samo pokrenut
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Spring Boot aplikacija
+  app:
+    build: .
+    container_name: fitnesstracker-app
+    environment:
+      # "mysql" je ime servisa iznad, ne localhost - tako se kontejneri
+      # međusobno vide unutar Docker mreže
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/fitnesstracker
+      SPRING_DATASOURCE_USERNAME: fitness
+      SPRING_DATASOURCE_PASSWORD: fitness123
+      # Groq API key se čita iz shell environment varijable na hostu
+      GROQ_API_KEY: ${GROQ_API_KEY}
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
 
 volumes:
   mysql_data:
