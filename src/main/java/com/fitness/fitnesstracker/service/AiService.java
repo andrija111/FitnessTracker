@@ -34,7 +34,7 @@ public class AiService {
     private final WorkoutProgressService workoutProgressService;
 
     private static final String GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-    private static final String MODEL = "llama-3.3-70b-versatile";
+    private static final String MODEL = "openai/gpt-oss-120b";
 
     /**
      * Generates a personalized workout plan for the authenticated user.
